@@ -30,6 +30,8 @@ Gebruik een browser die view transitions ondersteunt (Chrome, Edge of Safari). I
 | `document.startViewTransition()` | `js/app.js`, functie `show()` | De DOM wordt gewisseld in de callback. De browser maakt een foto van voor en na. |
 | Pil in de navigatie | `.nav__item[aria-current] .nav__pill` | Alleen het actieve item heeft de naam `nav-pill`, dus de pil verhuist. |
 | Dag en nacht | `js/app.js`, `themeButton` | Een animatie op `::view-transition-new(root)` met `clip-path: circle()`. De namen gaan tijdens de wissel even uit via `.theme-switching`. |
+| Erbij en weg | `::view-transition-new(*):only-child` | Elementen die maar in één van de twee staten bestaan (bijvoorbeeld de route-kaart) schuiven omhoog binnen of zakken weg, met een korte vertraging per element. |
+| Header | `::view-transition-old(header)` | De header gaat omhoog weg en komt van boven terug met de nieuwe titel. |
 | Kaart die lager wordt | `::view-transition-old(map)` | `object-fit: none` laat de tekst niet uitrekken terwijl de kaart krimpt. |
 | Minder beweging | `prefers-reduced-motion` | De animaties duren dan bijna 0 ms. |
 

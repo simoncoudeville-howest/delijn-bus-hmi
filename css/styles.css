@@ -474,6 +474,14 @@ a { color: inherit; }
 [data-vt="climate"] { view-transition-name: climate; }
 [data-vt="route"] { view-transition-name: route; }
 [data-vt="chart"] { view-transition-name: chart; }
+[data-vt="charge"] { view-transition-name: charge; }
+[data-vt="info-1"] { view-transition-name: info-1; }
+[data-vt="info-2"] { view-transition-name: info-2; }
+[data-vt="info-3"] { view-transition-name: info-3; }
+[data-vt="zone-front"] { view-transition-name: zone-front; }
+[data-vt="zone-rear"] { view-transition-name: zone-rear; }
+[data-vt="fan"] { view-transition-name: fan; }
+[data-vt="modes"] { view-transition-name: modes; }
 
 ::view-transition-group(*) {
   animation-duration: var(--motion-duration-slow);
@@ -495,13 +503,48 @@ a { color: inherit; }
   overflow: clip;
 }
 
-/* Elementen die alleen in de nieuwe staat bestaan, schuiven rustig binnen. */
-@keyframes enter-up {
+/* Elementen die in de nieuwe staat erbij komen schuiven rustig omhoog naar binnen,
+   elementen die verdwijnen zakken weg. Gedeelde elementen morphen (zie hierboven). */
+@keyframes vt-enter-up {
   from { opacity: 0; transform: translateY(calc(32 * var(--u))); }
 }
-::view-transition-new(route):only-child,
-::view-transition-new(chart):only-child {
-  animation: enter-up var(--motion-duration-slow) var(--motion-easing-standard) both;
+@keyframes vt-exit-down {
+  to { opacity: 0; transform: translateY(calc(24 * var(--u))) scale(0.98); }
+}
+::view-transition-old(*):only-child {
+  animation: vt-exit-down var(--motion-duration-base) var(--motion-easing-standard) both;
+}
+::view-transition-new(*):only-child {
+  animation: vt-enter-up var(--motion-duration-slow) var(--motion-easing-standard) both;
+}
+
+/* Een korte vertraging per element geeft een rustige opbouw. */
+::view-transition-new(route):only-child { animation-delay: 80ms; }
+::view-transition-new(info-1):only-child { animation-delay: 120ms; }
+::view-transition-new(info-2):only-child { animation-delay: 180ms; }
+::view-transition-new(info-3):only-child { animation-delay: 240ms; }
+::view-transition-new(chart):only-child { animation-delay: 80ms; }
+::view-transition-new(charge):only-child { animation-delay: 200ms; }
+::view-transition-new(zone-front):only-child { animation-delay: 80ms; }
+::view-transition-new(zone-rear):only-child { animation-delay: 140ms; }
+::view-transition-new(fan):only-child { animation-delay: 200ms; }
+::view-transition-new(modes):only-child { animation-delay: 280ms; }
+::view-transition-new(range):only-child { animation-delay: 60ms; }
+::view-transition-new(battery):only-child { animation-delay: 120ms; }
+::view-transition-new(climate):only-child { animation-delay: 160ms; }
+
+/* De header gaat omhoog weg en komt van boven weer binnen met de nieuwe titel. */
+@keyframes vt-header-out {
+  to { opacity: 0; transform: translateY(-100%); }
+}
+@keyframes vt-header-in {
+  from { opacity: 0; transform: translateY(-100%); }
+}
+::view-transition-old(header) {
+  animation: vt-header-out var(--motion-duration-fast) ease-in both;
+}
+::view-transition-new(header) {
+  animation: vt-header-in var(--motion-duration-base) var(--motion-easing-standard) var(--motion-duration-fast) both;
 }
 
 /* Wissel tussen dag en nacht: een cirkel die uitdijt (zie js/app.js). */
