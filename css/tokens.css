@@ -1,0 +1,135 @@
+/* Design tokens uit Figma (bestand "De Lijn Bus HMI").
+   De namen volgen de Figma-variabelen: color/bg/surface wordt --color-bg-surface. */
+
+/* Eenheid voor alle maten. 1 --u is 1 px in het ontwerp (1024 x 1366 staand, 1920 x 1080 liggend)
+   en schaalt mee met het venster. Wil je alles groter of kleiner? Zet --ui-scale hoger of lager. */
+:root {
+  --ui-scale: 1;
+  --u: max(0.55px, var(--ui-scale) * min(100vw / 1024, 100vh / 1366));
+}
+@media (min-aspect-ratio: 6/5) {
+  :root { --u: max(0.55px, var(--ui-scale) * min(100vw / 1920, 100vh / 1080)); }
+}
+
+:root {
+  /* Primitives */
+  --yellow-100: #fff5b8;
+  --yellow-300: #ffe866;
+  --yellow-400: #ffe14d;
+  --yellow-500: #fad21e;
+  --yellow-900: #5c4a00;
+
+  --gray-0: #ffffff;
+  --gray-50: #f6f6f4;
+  --gray-100: #ecece8;
+  --gray-200: #d9d9d3;
+  --gray-300: #b8b8b0;
+  --gray-500: #6b6b64;
+  --gray-600: #4a4a45;
+  --gray-700: #33332f;
+  --gray-800: #22221f;
+  --gray-900: #151513;
+  --gray-950: #0c0c0b;
+
+  --green-100: #d6f5e0;
+  --green-300: #6fd39a;
+  --green-500: #1fa25a;
+  --green-700: #0f6b3a;
+  --red-100: #ffe0dc;
+  --red-300: #ff8a80;
+  --red-500: #e5372b;
+  --red-700: #a3180e;
+  --blue-100: #dceBff;
+  --blue-300: #7fb2f5;
+  --blue-500: #2f7de1;
+  --blue-700: #1b4f9c;
+  --orange-100: #ffebd1;
+  --orange-300: #ffb866;
+  --orange-500: #f28c12;
+  --orange-700: #a15600;
+
+  /* Layout */
+  --spacing-xs: calc(4 * var(--u));
+  --spacing-sm: calc(8 * var(--u));
+  --spacing-md: calc(16 * var(--u));
+  --spacing-lg: calc(24 * var(--u));
+  --spacing-xl: calc(32 * var(--u));
+  --spacing-2xl: calc(48 * var(--u));
+  --spacing-3xl: calc(64 * var(--u));
+  --radius-sm: calc(8 * var(--u));
+  --radius-md: calc(16 * var(--u));
+  --radius-lg: calc(24 * var(--u));
+  --radius-xl: calc(32 * var(--u));
+  --radius-full: calc(999 * var(--u));
+  --size-touch-min: calc(64 * var(--u));
+  --size-touch-lg: calc(88 * var(--u));
+  --size-icon-md: calc(32 * var(--u));
+  --size-icon-lg: calc(48 * var(--u));
+
+  /* Motion */
+  --motion-duration-fast: 150ms;
+  --motion-duration-base: 300ms;
+  --motion-duration-slow: 500ms;
+  --motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-easing-emphasized: cubic-bezier(0.3, 0, 0, 1.2);
+
+  /* Typografie (Figtree) */
+  --font-family: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Semantische kleuren: Day (standaard) */
+:root,
+:root[data-theme="day"] {
+  color-scheme: light;
+  --color-bg-app: var(--gray-50);
+  --color-bg-surface: var(--gray-0);
+  --color-bg-raised: var(--gray-100);
+  --color-bg-raised-pressed: var(--gray-200);
+  --color-bg-inverse: var(--gray-900);
+  --color-bg-accent: var(--yellow-400);
+  --color-bg-accent-pressed: var(--yellow-500);
+  --color-bg-accent-subtle: var(--yellow-100);
+  --color-text-primary: var(--gray-900);
+  --color-text-secondary: var(--gray-600);
+  --color-text-on-accent: var(--gray-900);
+  --color-text-inverse: var(--gray-50);
+  --color-border-default: var(--gray-100);
+  --color-border-strong: var(--gray-300);
+  --color-focus-ring: var(--blue-500);
+  --color-status-success: var(--green-500);
+  --color-status-success-subtle: var(--green-100);
+  --color-status-warning: var(--orange-500);
+  --color-status-warning-subtle: var(--orange-100);
+  --color-status-danger: var(--red-500);
+  --color-status-danger-subtle: var(--red-100);
+  --color-status-info: var(--blue-500);
+  --color-status-info-subtle: var(--blue-100);
+}
+
+/* Semantische kleuren: Night */
+:root[data-theme="night"] {
+  color-scheme: dark;
+  --color-bg-app: var(--gray-950);
+  --color-bg-surface: var(--gray-800);
+  --color-bg-raised: var(--gray-700);
+  --color-bg-raised-pressed: var(--gray-600);
+  --color-bg-inverse: var(--gray-50);
+  --color-bg-accent: var(--yellow-400);
+  --color-bg-accent-pressed: var(--yellow-300);
+  --color-bg-accent-subtle: var(--yellow-900);
+  --color-text-primary: var(--gray-50);
+  --color-text-secondary: var(--gray-300);
+  --color-text-on-accent: var(--gray-900);
+  --color-text-inverse: var(--gray-900);
+  --color-border-default: var(--gray-700);
+  --color-border-strong: var(--gray-500);
+  --color-focus-ring: var(--blue-300);
+  --color-status-success: var(--green-300);
+  --color-status-success-subtle: var(--green-700);
+  --color-status-warning: var(--orange-300);
+  --color-status-warning-subtle: var(--orange-700);
+  --color-status-danger: var(--red-300);
+  --color-status-danger-subtle: var(--red-700);
+  --color-status-info: var(--blue-300);
+  --color-status-info-subtle: var(--blue-700);
+}

@@ -1,0 +1,584 @@
+/* ------------------------------------------------------------
+   Basis
+------------------------------------------------------------ */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { margin: 0; height: 100%; }
+
+body {
+  font-family: var(--font-family);
+  color: var(--color-text-primary);
+  background: var(--color-bg-raised-pressed);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, p, ol { margin: 0; }
+ol { padding: 0; list-style: none; }
+button { font: inherit; color: inherit; }
+a { color: inherit; }
+
+:focus-visible {
+  outline: calc(4 * var(--u)) solid var(--color-focus-ring);
+  outline-offset: calc(2 * var(--u));
+}
+
+/* ------------------------------------------------------------
+   Scherm: vult het hele venster. Er is geen mockup of vast formaat.
+   De header en de navigatie blijven staan, de weergave ertussen neemt de rest en scrolt als het niet past.
+------------------------------------------------------------ */
+.stage {
+  position: fixed;
+  inset: 0;
+}
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  width: 100%;
+  height: 100%;
+  padding: var(--spacing-xl);
+  background: var(--color-bg-app);
+  overflow: hidden;
+}
+
+.views {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.view {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.view::-webkit-scrollbar { display: none; }
+.view[hidden] { display: none; }
+.view > * { flex-shrink: 0; }
+.view > .map-card:not(.map-card--short),
+.view > .chart-card,
+.view > .route-grid { flex-shrink: 1; }
+
+}
+
+/* ------------------------------------------------------------
+   Tekststijlen
+------------------------------------------------------------ */
+.label { font-size: calc(22 * var(--u)); line-height: 1.2; font-weight: 600; color: var(--color-text-secondary); }
+
+/* ------------------------------------------------------------
+   Header
+------------------------------------------------------------ */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(64 * var(--u));
+  flex: none;
+}
+
+.header-line {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  font-size: calc(32 * var(--u));
+  line-height: 1.25;
+  font-weight: 600;
+}
+.header-line i { font-size: var(--size-icon-md); }
+
+.line-pill {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-accent);
+  color: var(--color-text-on-accent);
+}
+
+.view-title {
+  font-size: calc(56 * var(--u));
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.screen[data-view="dashboard"] .view-title { display: none; }
+.screen:not([data-view="dashboard"]) .header-line { display: none; }
+
+.app-header__right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  font-size: calc(40 * var(--u));
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.icon-toggle {
+  display: grid;
+  place-items: center;
+  width: var(--size-touch-min);
+  height: var(--size-touch-min);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-raised);
+  font-size: var(--size-icon-md);
+  cursor: pointer;
+}
+.icon-toggle:active { background: var(--color-bg-raised-pressed); }
+
+/* ------------------------------------------------------------
+   Card, tegel, knoppen
+------------------------------------------------------------ */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-lg);
+}
+
+.card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  font-size: calc(22 * var(--u));
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+.card__head i { font-size: var(--size-icon-md); line-height: 1; flex: none; }
+.card__head-end { display: inline-flex; align-items: center; gap: var(--spacing-md); }
+
+.card__head--title h2 {
+  font-size: calc(32 * var(--u));
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* De link in het label maakt de hele card klikbaar. */
+.stretched-link { text-decoration: none; }
+.stretched-link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+
+.tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+.tile { gap: var(--spacing-sm); }
+.tile__value { font-size: calc(56 * var(--u)); line-height: 1.15; font-weight: 700; letter-spacing: -0.01em; }
+.tile__sub { font-size: calc(24 * var(--u)); line-height: 1.4; color: var(--color-text-secondary); }
+
+.bar {
+  height: calc(12 * var(--u));
+  border-radius: var(--radius-full);
+  background: var(--color-bg-raised);
+  overflow: hidden;
+}
+.bar span { display: block; width: var(--p); height: 100%; background: var(--color-status-success); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  min-width: var(--size-touch-lg);
+  min-height: var(--size-touch-lg);
+  padding: 0 var(--spacing-lg);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-raised);
+  color: var(--color-text-primary);
+  font-size: calc(32 * var(--u));
+  line-height: 1.25;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  z-index: 1; /* boven de stretched link */
+}
+.btn i { font-size: var(--size-icon-md); line-height: 1; }
+.btn:active { background: var(--color-bg-raised-pressed); }
+.btn--icon { width: var(--size-touch-lg); padding: 0; }
+.btn--on-map { background: var(--color-bg-surface); }
+.btn--on-map:active { background: var(--color-bg-raised); }
+
+.btn--primary,
+.btn[aria-pressed="true"] { background: var(--color-bg-accent); color: var(--color-text-on-accent); }
+.btn--primary:active,
+.btn[aria-pressed="true"]:active { background: var(--color-bg-accent-pressed); }
+
+.badge {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-full);
+  font-size: calc(22 * var(--u));
+  line-height: 1.2;
+  font-weight: 600;
+}
+.badge .dot { width: calc(16 * var(--u)); height: calc(16 * var(--u)); border-radius: 50%; }
+.badge--success { background: var(--color-status-success-subtle); }
+.badge--success .dot { background: var(--color-status-success); }
+
+/* ------------------------------------------------------------
+   Kaart (placeholder voor de 3D-kaart)
+------------------------------------------------------------ */
+.map-card {
+  position: relative;
+  flex: 1;
+  min-height: calc(320 * var(--u));
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-raised);
+  overflow: hidden;
+}
+.map-card--short { flex: none; height: calc(340 * var(--u)); }
+
+.map-card__link { position: absolute; inset: 0; z-index: 0; }
+.map-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* 3D-kaart (Mapbox): ligt onder de overlays en laat klikken door naar de kaartlink */
+.map-card .map-gl { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.map-gl[hidden] { display: none; }
+.map-card--gl .map-art,
+.map-card--gl .map-note { display: none; }
+/* Het Mapbox-logo en de attributie moeten zichtbaar blijven. */
+.map-card--gl .map-chip,
+.map-card--gl .zoom { bottom: calc(56 * var(--u)); }
+
+.bus-marker {
+  width: calc(44 * var(--u));
+  height: calc(44 * var(--u));
+  border-radius: 50%;
+  background: var(--color-bg-accent);
+  border: calc(8 * var(--u)) solid var(--color-bg-surface);
+  box-sizing: border-box;
+}
+.road { fill: none; stroke: var(--color-bg-surface); stroke-linecap: round; stroke-linejoin: round; }
+.road--minor { stroke-width: 12; }
+.road--major { stroke-width: 28; }
+.route-line { fill: none; stroke: var(--color-bg-accent); stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
+.position { fill: var(--color-bg-accent); stroke: var(--color-bg-surface); stroke-width: 8; }
+
+.next-stop {
+  position: absolute;
+  z-index: 1;
+  top: var(--spacing-lg);
+  left: var(--spacing-lg);
+  right: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-lg);
+  pointer-events: none; /* klikken gaat door naar de kaartlink */
+}
+.next-stop__body { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-lg); }
+.next-stop__name { font-size: calc(56 * var(--u)); line-height: 1.15; font-weight: 700; letter-spacing: -0.01em; }
+.next-stop__sub { font-size: calc(28 * var(--u)); line-height: 1.4; color: var(--color-text-secondary); }
+.next-stop__eta { display: flex; flex-direction: column; align-items: flex-end; gap: var(--spacing-sm); }
+.next-stop__time { font-size: calc(56 * var(--u)); line-height: 1.15; font-weight: 700; letter-spacing: -0.01em; }
+
+/* Op het routescherm is de kaart laag: de kaart "Volgende halte" wordt dan één compacte rij. */
+.map-card--short .next-stop { padding: var(--spacing-md) var(--spacing-lg); }
+.map-card--short .next-stop .card__head { display: none; }
+.map-card--short .next-stop__name,
+.map-card--short .next-stop__time { font-size: calc(40 * var(--u)); line-height: 1.2; }
+.map-card--short .next-stop__sub { font-size: calc(24 * var(--u)); }
+.map-card--short .next-stop__eta { flex-direction: row; align-items: center; gap: var(--spacing-md); }
+.map-card--short .next-stop__eta .label { order: -1; }
+
+.map-chip,
+.map-note {
+  position: absolute;
+  z-index: 1;
+  bottom: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-surface);
+  pointer-events: none;
+}
+.map-chip { left: var(--spacing-lg); font-size: calc(22 * var(--u)); line-height: 1.2; font-weight: 600; }
+.map-note {
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: calc(20 * var(--u));
+  line-height: 1.3;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.zoom {
+  position: absolute;
+  z-index: 1;
+  right: var(--spacing-lg);
+  bottom: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* ------------------------------------------------------------
+   Klimaat, energie, route
+------------------------------------------------------------ */
+.climate__body { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-lg); }
+.climate__value { font-size: calc(56 * var(--u)); line-height: 1.15; font-weight: 700; letter-spacing: -0.01em; }
+.stepper { display: flex; gap: var(--spacing-md); }
+
+.segmented { display: flex; gap: var(--spacing-md); }
+.segmented .btn { flex: 1; }
+.mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); }
+
+.chart-card { flex: 1; min-height: calc(320 * var(--u)); }
+.bars { flex: 1; min-height: 0; display: flex; align-items: flex-end; gap: var(--spacing-md); }
+.bar-col {
+  flex: 1;
+  height: calc(var(--h) * 1%);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-raised);
+}
+.bar-col--current { background: var(--color-bg-accent); }
+.chart-axis { display: flex; justify-content: space-between; font-size: calc(20 * var(--u)); line-height: 1.3; font-weight: 500; color: var(--color-text-secondary); }
+
+.charge-card__body { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-lg); }
+.charge-card__title { font-size: calc(32 * var(--u)); line-height: 1.25; font-weight: 600; margin-bottom: var(--spacing-sm); }
+
+.route-grid { flex: 1; min-height: min-content; display: grid; grid-template-columns: 1fr calc(380 * var(--u)); gap: var(--spacing-lg); }
+.side-cards { display: flex; flex-direction: column; gap: var(--spacing-lg); }
+.info-card { gap: var(--spacing-sm); }
+.info-card p { font-size: calc(24 * var(--u)); line-height: 1.4; color: var(--color-text-secondary); }
+
+.stops { display: flex; flex-direction: column; }
+.stop {
+  --dot-size: calc(24 * var(--u));
+  position: relative;
+  display: grid;
+  grid-template-columns: calc(40 * var(--u)) 1fr auto;
+  column-gap: var(--spacing-lg);
+  align-items: center;
+  font-size: calc(28 * var(--u));
+  line-height: 1.4;
+}
+.stop__name, .stop__time { padding-block: var(--spacing-md); }
+.stop__time { color: var(--color-text-secondary); }
+.stop[data-state="passed"] .stop__name { color: var(--color-text-secondary); }
+
+.stop__track { align-self: stretch; position: relative; }
+.stop__track::before,
+.stop__track::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: calc(4 * var(--u));
+  transform: translateX(-50%);
+  background: var(--color-border-strong);
+}
+.stop__track::before { top: 0; height: 50%; }
+.stop__track::after { bottom: 0; height: 50%; }
+.stop:first-child .stop__track::before,
+.stop:last-child .stop__track::after { background: transparent; }
+.stop[data-state="passed"] .stop__track::before,
+.stop[data-state="passed"] .stop__track::after,
+.stop[data-state="current"] .stop__track::before { background: var(--color-bg-accent); }
+.stop:first-child .stop__track::before,
+.stop:last-child .stop__track::after { background: transparent; }
+
+.stop::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: calc(20 * var(--u));
+  top: 50%;
+  width: var(--dot-size);
+  height: var(--dot-size);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+.stop[data-state="passed"]::before { background: var(--color-bg-accent); }
+.stop[data-state="current"]::before {
+  --dot-size: calc(40 * var(--u));
+  background: var(--color-bg-accent);
+  border: calc(8 * var(--u)) solid var(--color-bg-accent-subtle);
+}
+.stop[data-state="upcoming"]::before { background: var(--color-bg-surface); border: calc(2 * var(--u)) solid var(--color-border-strong); }
+.stop[data-state="current"] .stop__name,
+.stop[data-state="current"] .stop__time { font-size: calc(32 * var(--u)); line-height: 1.25; font-weight: 600; color: var(--color-text-primary); }
+
+/* ------------------------------------------------------------
+   Navigatie
+------------------------------------------------------------ */
+.nav {
+  flex: none;
+  display: flex;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-full);
+}
+.nav__item {
+  position: relative;
+  isolation: isolate;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-full);
+  font-size: calc(22 * var(--u));
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+.nav__item i { font-size: var(--size-icon-md); line-height: 1; }
+.nav__pill {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-accent);
+}
+.nav__item[aria-current="page"] { color: var(--color-text-on-accent); }
+.nav__item[aria-current="page"] .nav__pill { display: block; view-transition-name: nav-pill; }
+
+/* ------------------------------------------------------------
+   View transitions
+   Elementen met dezelfde view-transition-name in de oude en de nieuwe
+   staat morphen naar elkaar. Er mag per moment maar één element per naam zijn.
+------------------------------------------------------------ */
+.app-header { view-transition-name: header; }
+.nav { view-transition-name: nav; }
+
+[data-vt="map"] { view-transition-name: map; }
+[data-vt="range"] { view-transition-name: range; }
+[data-vt="battery"] { view-transition-name: battery; }
+[data-vt="climate"] { view-transition-name: climate; }
+[data-vt="route"] { view-transition-name: route; }
+[data-vt="chart"] { view-transition-name: chart; }
+
+::view-transition-group(*) {
+  animation-duration: var(--motion-duration-slow);
+  animation-timing-function: var(--motion-easing-standard);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--motion-duration-base);
+  animation-timing-function: var(--motion-easing-standard);
+}
+
+/* De kaart wordt lager of hoger: de inhoud blijft bovenaan staan en wordt bijgesneden,
+   zodat de tekst tijdens het morphen niet uitrekt. */
+::view-transition-old(map),
+::view-transition-new(map) {
+  height: 100%;
+  object-fit: none;
+  object-position: top;
+  overflow: clip;
+}
+
+/* Elementen die alleen in de nieuwe staat bestaan, schuiven rustig binnen. */
+@keyframes enter-up {
+  from { opacity: 0; transform: translateY(calc(32 * var(--u))); }
+}
+::view-transition-new(route):only-child,
+::view-transition-new(chart):only-child {
+  animation: enter-up var(--motion-duration-slow) var(--motion-easing-standard) both;
+}
+
+/* Wissel tussen dag en nacht: een cirkel die uitdijt (zie js/app.js). */
+html.theme-switching * { view-transition-name: none !important; }
+html.theme-switching::view-transition-old(root),
+html.theme-switching::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html.theme-switching::view-transition-old(root) { z-index: 1; }
+html.theme-switching::view-transition-new(root) { z-index: 2; }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation-duration: 0.01ms !important; animation-delay: 0s !important; }
+}
+
+/* ------------------------------------------------------------
+   Responsief: het scherm vult altijd het venster
+   - staand (tablet): alles onder elkaar (standaard hierboven)
+   - liggend (auto-display, monitor): twee kolommen per weergave
+   - smal (telefoon): compacter
+------------------------------------------------------------ */
+@media (min-aspect-ratio: 6/5) {
+  .screen { padding: var(--spacing-lg); }
+
+  .view[data-view="dashboard"],
+  .view[data-view="route"],
+  .view[data-view="energy"],
+  .view[data-view="climate"] {
+    display: grid;
+    gap: var(--spacing-lg);
+    overflow: hidden auto;
+  }
+  .view[hidden] { display: none; }
+
+  /* Overzicht: kaart links, tegels en klimaat rechts */
+  .view[data-view="dashboard"] { grid-template-columns: 1.5fr 1fr; grid-template-rows: auto 1fr; }
+  .view[data-view="dashboard"] .map-card { grid-row: 1 / span 2; }
+
+  /* Route: kaart links, route en kaartjes rechts */
+  .view[data-view="route"] { grid-template-columns: 1fr 1fr; grid-template-rows: minmax(0, 1fr) auto; }
+  .view[data-view="route"] .map-card { grid-row: 1 / span 2; height: auto; min-height: calc(320 * var(--u)); }
+  .view[data-view="route"] .route-grid { display: contents; }
+  .view[data-view="route"] .route-card { min-height: 0; overflow: auto; scrollbar-width: none; }
+  .view[data-view="route"] .side-cards { flex-direction: row; }
+  .view[data-view="route"] .side-cards .info-card { flex: 1; }
+  .view[data-view="route"] .info-card:nth-child(n+3) { display: none; }
+
+  /* Energie: tegels en laadstop links, grafiek rechts */
+  .view[data-view="energy"] { grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr; }
+  .view[data-view="energy"] .chart-card { grid-column: 2; grid-row: 1 / span 2; }
+  .view[data-view="energy"] .charge-card { grid-column: 1; grid-row: 2; align-self: start; }
+  .view[data-view="energy"] .charge-card__body { flex-direction: column; align-items: flex-start; }
+
+  /* Klimaat: twee kolommen */
+  .view[data-view="climate"] { grid-template-columns: 1fr 1fr; align-content: start; }
+  .view[data-view="climate"] .climate { grid-column: 1; }
+  .view[data-view="climate"] .tiles { grid-column: 2; }
+
+  /* In de tweekoloms-weergaven staan de tegels onder elkaar in de smalle kolom. */
+  .view[data-view="dashboard"] .tiles { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 560px) {
+  .header-line span:last-child { display: none; }
+  .app-header__right { font-size: calc(28 * var(--u)); gap: var(--spacing-md); }
+  .view-title { font-size: calc(40 * var(--u)); }
+  .tiles { grid-template-columns: 1fr; }
+  .next-stop__name, .next-stop__time, .tile__value, .climate__value { font-size: calc(40 * var(--u)); }
+  .next-stop__sub { font-size: calc(22 * var(--u)); }
+  .btn { font-size: calc(24 * var(--u)); min-height: var(--size-touch-min); min-width: var(--size-touch-min); }
+  .btn--icon { width: var(--size-touch-min); }
+  .nav__item span:last-child { display: none; }
+  .map-chip { font-size: calc(18 * var(--u)); max-width: 60%; }
+  .stop, .info-card p, .tile__sub { font-size: calc(22 * var(--u)); }
+  .mode-grid, .segmented { gap: var(--spacing-sm); }
+  .charge-card__body { flex-direction: column; align-items: flex-start; }
+}

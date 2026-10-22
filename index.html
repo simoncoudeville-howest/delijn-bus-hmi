@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="nl" data-theme="day">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>De Lijn bus HMI</title>
+  <meta name="description" content="Prototype van een infotainmentsysteem voor een elektrische bus, gebouwd met de View Transition API.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.33.0/mapbox-gl.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.33.0/mapbox-gl.js" defer></script>
+  <script src="js/config.js" defer></script>
+  <script src="js/map.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <div class="stage">
+    <div class="screen" id="screen" data-view="dashboard">
+
+      <!-- Vaste header: blijft staan tijdens de overgangen -->
+      <header class="app-header">
+        <div class="app-header__left">
+          <div class="header-line">
+            <span class="line-pill">1</span>
+            <i class="ph ph-bus" aria-hidden="true"></i>
+            <span>Kortrijk Station naar Menen Markt</span>
+          </div>
+          <h1 class="view-title" id="view-title">Overzicht</h1>
+        </div>
+        <div class="app-header__right">
+          <button class="icon-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Nachtmodus">
+            <i class="ph ph-moon" aria-hidden="true"></i>
+          </button>
+          <time datetime="14:16">14:16</time>
+        </div>
+      </header>
+
+      <main class="views">
+
+        <!-- 1. Overzicht -->
+        <section class="view" id="view-dashboard" data-view="dashboard" aria-label="Overzicht">
+          <article class="map-card" data-vt="map">
+            <a class="map-card__link" href="#route" aria-label="Open route"></a>
+            <svg class="map-art" viewBox="0 0 944 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <path class="road road--minor" d="M -20 200 L 960 150 M 0 640 L 960 600 M 420 -20 L 400 740 M 800 -20 L 760 740"/>
+              <path class="road road--major" d="M -20 520 C 200 480 400 560 600 420 C 800 280 800 260 980 300 M 220 -20 C 260 200 180 380 300 740 M 640 -20 C 620 160 700 300 560 460 C 420 620 520 640 540 740"/>
+              <path class="route-line" d="M 300 740 C 300 600 380 520 470 470 C 560 420 640 380 600 300 C 560 220 520 160 640 -20"/>
+              <circle class="position" cx="470" cy="470" r="18"/>
+            </svg>
+            <div class="map-gl" id="map-gl" hidden></div>
+            <p class="map-note">3D-kaart (placeholder)</p>
+            <div class="next-stop">
+              <div class="card__head"><span>Volgende halte</span><i class="ph ph-map-pin" aria-hidden="true"></i></div>
+              <div class="next-stop__body">
+                <div>
+                  <p class="next-stop__name">Bissegem</p>
+                  <p class="next-stop__sub">Over 3 min</p>
+                </div>
+                <div class="next-stop__eta">
+                  <p class="label">Aankomst</p>
+                  <p class="next-stop__time">14:19</p>
+                  <span class="badge badge--success"><span class="dot"></span>Op tijd</span>
+                </div>
+              </div>
+            </div>
+            <p class="map-chip">Eindhalte Menen Markt, 14:42</p>
+            <div class="zoom">
+              <button class="btn btn--icon btn--on-map" type="button" data-zoom="1" aria-label="Inzoomen"><i class="ph ph-plus" aria-hidden="true"></i></button>
+              <button class="btn btn--icon btn--on-map" type="button" data-zoom="-1" aria-label="Uitzoomen"><i class="ph ph-minus" aria-hidden="true"></i></button>
+            </div>
+          </article>
+
+          <div class="tiles">
+            <article class="card tile" data-vt="range">
+              <div class="card__head"><a class="stretched-link" href="#energy">Bereik</a><i class="ph ph-gauge" aria-hidden="true"></i></div>
+              <p class="tile__value">212 km</p>
+              <p class="tile__sub">Genoeg tot de eindhalte, +14 km</p>
+            </article>
+            <article class="card tile" data-vt="battery">
+              <div class="card__head"><a class="stretched-link" href="#energy">Batterij</a><i class="ph ph-battery-high" aria-hidden="true"></i></div>
+              <p class="tile__value">78%</p>
+              <div class="bar" role="img" aria-label="Batterij 78 procent" style="--p: 78%"><span></span></div>
+              <p class="tile__sub">Nog 4 u 10 min rijtijd</p>
+            </article>
+          </div>
+
+          <article class="card climate" data-vt="climate">
+            <div class="card__head"><a class="stretched-link" href="#climate">Klimaat in de bus</a><i class="ph ph-thermometer-simple" aria-hidden="true"></i></div>
+            <div class="climate__body">
+              <div>
+                <p class="climate__value"><span data-temp-value>21</span> °C</p>
+                <p class="tile__sub">Buiten 14 °C, verwarming aan</p>
+              </div>
+              <div class="stepper">
+                <button class="btn btn--icon" type="button" data-temp-step="-1" aria-label="Kouder"><i class="ph ph-minus" aria-hidden="true"></i></button>
+                <button class="btn btn--icon" type="button" data-temp-step="1" aria-label="Warmer"><i class="ph ph-plus" aria-hidden="true"></i></button>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <!-- 2. Route -->
+        <section class="view" id="view-route" data-view="route" aria-label="Route" hidden>
+          <article class="map-card map-card--short" data-vt="map">
+            <a class="map-card__link" href="#dashboard" aria-label="Terug naar overzicht"></a>
+            <svg class="map-art" viewBox="0 0 944 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <path class="road road--minor" d="M -20 200 L 960 150 M 0 640 L 960 600 M 420 -20 L 400 740 M 800 -20 L 760 740"/>
+              <path class="road road--major" d="M -20 520 C 200 480 400 560 600 420 C 800 280 800 260 980 300 M 220 -20 C 260 200 180 380 300 740 M 640 -20 C 620 160 700 300 560 460 C 420 620 520 640 540 740"/>
+              <path class="route-line" d="M 300 740 C 300 600 380 520 470 470 C 560 420 640 380 600 300 C 560 220 520 160 640 -20"/>
+              <circle class="position" cx="470" cy="470" r="18"/>
+            </svg>
+            <div class="next-stop">
+              <div class="card__head"><span>Volgende halte</span><i class="ph ph-map-pin" aria-hidden="true"></i></div>
+              <div class="next-stop__body">
+                <div>
+                  <p class="next-stop__name">Bissegem</p>
+                  <p class="next-stop__sub">Over 3 min</p>
+                </div>
+                <div class="next-stop__eta">
+                  <p class="label">Aankomst</p>
+                  <p class="next-stop__time">14:19</p>
+                  <span class="badge badge--success"><span class="dot"></span>Op tijd</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <div class="route-grid">
+            <article class="card route-card" data-vt="route">
+              <div class="card__head"><span>Route</span><i class="ph ph-map-trifold" aria-hidden="true"></i></div>
+              <ol class="stops">
+                <li class="stop" data-state="passed"><span class="stop__track"></span><span class="stop__name">Kortrijk Station</span><span class="stop__time">14:05</span></li>
+                <li class="stop" data-state="passed"><span class="stop__track"></span><span class="stop__name">Heule</span><span class="stop__time">14:12</span></li>
+                <li class="stop" data-state="current" aria-current="step"><span class="stop__track"></span><span class="stop__name">Bissegem</span><span class="stop__time">14:19</span></li>
+                <li class="stop" data-state="upcoming"><span class="stop__track"></span><span class="stop__name">Wevelgem</span><span class="stop__time">14:26</span></li>
+                <li class="stop" data-state="upcoming"><span class="stop__track"></span><span class="stop__name">Moorsele</span><span class="stop__time">14:29</span></li>
+                <li class="stop" data-state="upcoming"><span class="stop__track"></span><span class="stop__name">Gullegem</span><span class="stop__time">14:33</span></li>
+                <li class="stop" data-state="upcoming"><span class="stop__track"></span><span class="stop__name">Rekkem</span><span class="stop__time">14:36</span></li>
+                <li class="stop" data-state="upcoming"><span class="stop__track"></span><span class="stop__name">Menen Station</span><span class="stop__time">14:39</span></li>
+                <li class="stop" data-state="upcoming"><span class="stop__track"></span><span class="stop__name">Menen Markt</span><span class="stop__time">14:42</span></li>
+              </ol>
+            </article>
+            <div class="side-cards">
+              <article class="card info-card">
+                <div class="card__head card__head--title"><h2>Overstap in Wevelgem</h2><i class="ph ph-bus" aria-hidden="true"></i></div>
+                <p>Lijn 14 naar Menen om 14:31.</p>
+              </article>
+              <article class="card info-card">
+                <div class="card__head card__head--title"><h2>Overstap in Menen Station</h2><i class="ph ph-train" aria-hidden="true"></i></div>
+                <p>Trein naar Ieper om 14:48.</p>
+              </article>
+              <article class="card info-card">
+                <div class="card__head card__head--title"><h2>Op schema</h2><i class="ph ph-check-circle" aria-hidden="true"></i></div>
+                <p>Geen vertraging op de route.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Energie -->
+        <section class="view" id="view-energy" data-view="energy" aria-label="Energie" hidden>
+          <div class="tiles">
+            <article class="card tile" data-vt="range">
+              <div class="card__head"><span>Bereik</span><i class="ph ph-gauge" aria-hidden="true"></i></div>
+              <p class="tile__value">212 km</p>
+              <p class="tile__sub">Genoeg tot de eindhalte, +14 km</p>
+            </article>
+            <article class="card tile" data-vt="battery">
+              <div class="card__head"><span>Batterij</span><i class="ph ph-battery-high" aria-hidden="true"></i></div>
+              <p class="tile__value">78%</p>
+              <div class="bar" role="img" aria-label="Batterij 78 procent" style="--p: 78%"><span></span></div>
+              <p class="tile__sub">Nog 4 u 10 min rijtijd</p>
+            </article>
+          </div>
+
+          <article class="card chart-card" data-vt="chart">
+            <div class="card__head">
+              <span>Verbruik per traject</span>
+              <span class="card__head-end">1,2 kWh/km <i class="ph ph-lightning" aria-hidden="true"></i></span>
+            </div>
+            <div class="bars" role="img" aria-label="Verbruik per traject, het hoogste bij de huidige halte">
+              <span class="bar-col" style="--h: 45"></span>
+              <span class="bar-col" style="--h: 60"></span>
+              <span class="bar-col bar-col--current" style="--h: 100"></span>
+              <span class="bar-col" style="--h: 70"></span>
+              <span class="bar-col" style="--h: 55"></span>
+              <span class="bar-col" style="--h: 80"></span>
+              <span class="bar-col" style="--h: 50"></span>
+              <span class="bar-col" style="--h: 65"></span>
+            </div>
+            <div class="chart-axis"><span>Kortrijk Station</span><span>Menen Markt</span></div>
+          </article>
+
+          <article class="card charge-card">
+            <div class="card__head"><span>Volgende laadstop</span><i class="ph ph-charging-station" aria-hidden="true"></i></div>
+            <div class="charge-card__body">
+              <div>
+                <p class="charge-card__title">Menen Markt, 14:42</p>
+                <p class="tile__sub">Aansluiten duurt ongeveer 20 min.</p>
+              </div>
+              <button class="btn btn--primary" type="button"><i class="ph ph-charging-station" aria-hidden="true"></i>Laadstop plannen</button>
+            </div>
+          </article>
+        </section>
+
+        <!-- 4. Klimaat -->
+        <section class="view" id="view-climate" data-view="climate" aria-label="Klimaat" hidden>
+          <article class="card climate" data-vt="climate">
+            <div class="card__head"><span>Klimaat in de bus</span><i class="ph ph-thermometer-simple" aria-hidden="true"></i></div>
+            <div class="climate__body">
+              <div>
+                <p class="climate__value"><span data-temp-value>21</span> °C</p>
+                <p class="tile__sub">Buiten 14 °C, verwarming aan</p>
+              </div>
+              <div class="stepper">
+                <button class="btn btn--icon" type="button" data-temp-step="-1" aria-label="Kouder"><i class="ph ph-minus" aria-hidden="true"></i></button>
+                <button class="btn btn--icon" type="button" data-temp-step="1" aria-label="Warmer"><i class="ph ph-plus" aria-hidden="true"></i></button>
+              </div>
+            </div>
+          </article>
+
+          <div class="tiles">
+            <article class="card tile">
+              <div class="card__head"><span>Voorin</span><i class="ph ph-thermometer-simple" aria-hidden="true"></i></div>
+              <p class="tile__value">21 °C</p>
+              <p class="tile__sub">Gemeten 20,5 °C</p>
+            </article>
+            <article class="card tile">
+              <div class="card__head"><span>Achterin</span><i class="ph ph-thermometer-simple" aria-hidden="true"></i></div>
+              <p class="tile__value">20 °C</p>
+              <p class="tile__sub">Gemeten 19,8 °C</p>
+            </article>
+          </div>
+
+          <article class="card">
+            <div class="card__head"><span>Ventilator</span><i class="ph ph-fan" aria-hidden="true"></i></div>
+            <div class="segmented" data-group="fan">
+              <button class="btn" type="button" aria-pressed="false">Laag</button>
+              <button class="btn" type="button" aria-pressed="true">Midden</button>
+              <button class="btn" type="button" aria-pressed="false">Hoog</button>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card__head"><span>Modus</span><i class="ph ph-sliders-horizontal" aria-hidden="true"></i></div>
+            <div class="mode-grid" data-group="mode">
+              <button class="btn" type="button" aria-pressed="true"><i class="ph ph-gauge" aria-hidden="true"></i>Auto</button>
+              <button class="btn" type="button" aria-pressed="false"><i class="ph ph-thermometer-simple" aria-hidden="true"></i>Verwarmen</button>
+              <button class="btn" type="button" aria-pressed="false"><i class="ph ph-snowflake" aria-hidden="true"></i>Koelen</button>
+              <button class="btn" type="button" aria-pressed="false"><i class="ph ph-wind" aria-hidden="true"></i>Ventilatie</button>
+            </div>
+          </article>
+        </section>
+      </main>
+
+      <!-- Vaste navigatie: de gele pil schuift mee naar het actieve item -->
+      <nav class="nav" aria-label="Hoofdnavigatie">
+        <a class="nav__item" href="#dashboard" data-nav="dashboard" aria-current="page"><span class="nav__pill"></span><i class="ph ph-squares-four" aria-hidden="true"></i><span>Overzicht</span></a>
+        <a class="nav__item" href="#route" data-nav="route"><span class="nav__pill"></span><i class="ph ph-map-trifold" aria-hidden="true"></i><span>Route</span></a>
+        <a class="nav__item" href="#energy" data-nav="energy"><span class="nav__pill"></span><i class="ph ph-battery-high" aria-hidden="true"></i><span>Energie</span></a>
+        <a class="nav__item" href="#climate" data-nav="climate"><span class="nav__pill"></span><i class="ph ph-thermometer-simple" aria-hidden="true"></i><span>Klimaat</span></a>
+      </nav>
+
+    </div>
+  </div>
+</body>
+</html>
