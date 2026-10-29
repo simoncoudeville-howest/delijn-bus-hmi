@@ -28,7 +28,7 @@ Gebruik een browser die view transitions ondersteunt (Chrome, Edge of Safari). I
 |---|---|---|
 | `view-transition-name` | `css/styles.css`, onderaan | `map`, `range`, `battery` en `climate` bestaan in meerdere weergaven. De browser morpht ze naar elkaar. |
 | `document.startViewTransition()` | `js/app.js`, functie `show()` | De DOM wordt gewisseld in de callback. De browser maakt een foto van voor en na. |
-| Pil in de navigatie | `.nav__item[aria-current] .nav__pill` | Alleen het actieve item heeft de naam `nav-pill`, dus de pil verhuist. |
+| Pil in de navigatie | `.nav__pill` | Eén pil met `view-transition-name: nav-pill`, altijd het eerste kind van de balk en in de kolom van het actieve item (grid). Icoon en label hebben eigen lagen (`nav-content-1` tot `-4`) erboven. Zo ligt de pil in beide richtingen onder de tekst. |
 | Dag en nacht | `js/app.js`, `themeButton` | Een animatie op `::view-transition-new(root)` met `clip-path: circle()`. De namen gaan tijdens de wissel even uit via `.theme-switching`. |
 | Erbij en weg | `::view-transition-new(*):only-child` | Elementen die maar in één van de twee staten bestaan (bijvoorbeeld de route-kaart) schuiven omhoog binnen of zakken weg, met een korte vertraging per element. |
 | Header | `::view-transition-old(header)` | De header gaat omhoog weg en komt van boven terug met de nieuwe titel. |

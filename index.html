@@ -192,18 +192,37 @@
               <span class="bar-col" style="--h: 80"></span>
               <span class="bar-col" style="--h: 50"></span>
               <span class="bar-col" style="--h: 65"></span>
+              <span class="bars__avg" style="--h: 66"></span>
             </div>
-            <div class="chart-axis"><span>Kortrijk Station</span><span>Menen Markt</span></div>
+            <div class="chart-axis"><span>Kortrijk Station</span><span>Gemiddelde (stippellijn)</span><span>Menen Markt</span></div>
+          </article>
+
+          <article class="card trend-card" data-vt="trend">
+            <div class="card__head"><span>Batterij tot de eindhalte</span><i class="ph ph-chart-line-up" aria-hidden="true"></i></div>
+            <div class="trend" role="img" aria-label="De batterij daalt van 84 procent bij het vertrek naar 54 procent bij de eindhalte, ruim boven de reserve van 20 procent">
+              <svg viewBox="0 0 400 160" preserveAspectRatio="none" aria-hidden="true">
+                <path class="trend__area" d="M0 25.6 L50 30.4 L100 35.2 L150 43.2 L200 48 L250 56 L300 62.4 L350 68.8 L400 73.6 L400 160 L0 160 Z"/>
+                <path class="trend__reserve" d="M0 128 L400 128"/>
+                <path class="trend__line trend__line--future" d="M100 35.2 L150 43.2 L200 48 L250 56 L300 62.4 L350 68.8 L400 73.6"/>
+                <path class="trend__line" d="M0 25.6 L50 30.4 L100 35.2"/>
+              </svg>
+              <span class="trend__now" style="left: 25%; top: 22%"></span>
+              <span class="trend__label" style="left: 25%; top: 22%">78%</span>
+              <span class="trend__label trend__label--end" style="top: 46%">54%</span>
+              <span class="trend__label trend__label--reserve" style="top: 80%">Reserve 20%</span>
+              <span class="trend__stop">Kortrijk Station</span>
+              <span class="trend__stop trend__stop--end">Menen Markt</span>
+            </div>
           </article>
 
           <article class="card charge-card" data-vt="charge">
             <div class="card__head"><span>Volgende laadstop</span><i class="ph ph-charging-station" aria-hidden="true"></i></div>
             <div class="charge-card__body">
-              <div>
+              <div class="charge-card__row">
                 <p class="charge-card__title">Menen Markt, 14:42</p>
-                <p class="tile__sub">Aansluiten duurt ongeveer 20 min.</p>
+                <button class="btn btn--small" type="button"><i class="ph ph-charging-station" aria-hidden="true"></i>Laadstop plannen</button>
               </div>
-              <button class="btn btn--primary" type="button"><i class="ph ph-charging-station" aria-hidden="true"></i>Laadstop plannen</button>
+              <p class="tile__sub">Aansluiten duurt ongeveer 20 min.</p>
             </div>
           </article>
         </section>
@@ -260,10 +279,11 @@
 
       <!-- Vaste navigatie: de gele pil schuift mee naar het actieve item -->
       <nav class="nav" aria-label="Hoofdnavigatie">
-        <a class="nav__item" href="#dashboard" data-nav="dashboard" aria-current="page"><span class="nav__pill"></span><i class="ph ph-squares-four" aria-hidden="true"></i><span>Overzicht</span></a>
-        <a class="nav__item" href="#route" data-nav="route"><span class="nav__pill"></span><i class="ph ph-map-trifold" aria-hidden="true"></i><span>Route</span></a>
-        <a class="nav__item" href="#energy" data-nav="energy"><span class="nav__pill"></span><i class="ph ph-battery-high" aria-hidden="true"></i><span>Energie</span></a>
-        <a class="nav__item" href="#climate" data-nav="climate"><span class="nav__pill"></span><i class="ph ph-thermometer-simple" aria-hidden="true"></i><span>Klimaat</span></a>
+        <span class="nav__pill" aria-hidden="true"></span>
+        <a class="nav__item" href="#dashboard" data-nav="dashboard" aria-current="page"><span class="nav__content"><i class="ph ph-squares-four" aria-hidden="true"></i><span class="nav__label">Overzicht</span></span></a>
+        <a class="nav__item" href="#route" data-nav="route"><span class="nav__content"><i class="ph ph-map-trifold" aria-hidden="true"></i><span class="nav__label">Route</span></span></a>
+        <a class="nav__item" href="#energy" data-nav="energy"><span class="nav__content"><i class="ph ph-battery-high" aria-hidden="true"></i><span class="nav__label">Energie</span></span></a>
+        <a class="nav__item" href="#climate" data-nav="climate"><span class="nav__content"><i class="ph ph-thermometer-simple" aria-hidden="true"></i><span class="nav__label">Klimaat</span></span></a>
       </nav>
 
     </div>

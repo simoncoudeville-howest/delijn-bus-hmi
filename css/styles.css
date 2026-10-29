@@ -211,6 +211,9 @@ a { color: inherit; }
 .btn i { font-size: var(--size-icon-md); line-height: 1; }
 .btn:active { background: var(--color-bg-raised-pressed); }
 .btn--icon { width: var(--size-touch-lg); padding: 0; }
+/* Kleine, rustige knop naast een tekst */
+.btn--small { min-width: 0; min-height: calc(56 * var(--u)); padding: 0 var(--spacing-md); font-size: calc(20 * var(--u)); }
+.btn--small i { font-size: calc(24 * var(--u)); }
 .btn--on-map { background: var(--color-bg-surface); }
 .btn--on-map:active { background: var(--color-bg-raised); }
 
@@ -345,8 +348,26 @@ a { color: inherit; }
 .segmented .btn { flex: 1; }
 .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); }
 
-.chart-card { flex: 1; min-height: calc(320 * var(--u)); }
-.bars { flex: 1; min-height: 0; display: flex; align-items: flex-end; gap: var(--spacing-md); }
+.chart-card,
+.trend-card { flex: 1; min-height: calc(240 * var(--u)); }
+.bars {
+  position: relative;
+  flex: 1;
+  min-height: calc(120 * var(--u));
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-sm);
+  background-image: linear-gradient(to top, var(--color-border-default) calc(1 * var(--u)), transparent calc(1 * var(--u)));
+  background-size: 100% calc(40 * var(--u));
+}
+.bars__avg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--h) * 1%);
+  border-top: calc(2 * var(--u)) dashed var(--color-text-secondary);
+  opacity: 0.6;
+}
 .bar-col {
   flex: 1;
   height: calc(var(--h) * 1%);
@@ -354,10 +375,11 @@ a { color: inherit; }
   background: var(--color-bg-raised);
 }
 .bar-col--current { background: var(--color-bg-accent); }
-.chart-axis { display: flex; justify-content: space-between; font-size: calc(20 * var(--u)); line-height: 1.3; font-weight: 500; color: var(--color-text-secondary); }
+.chart-axis { display: flex; justify-content: space-between; gap: var(--spacing-md); font-size: calc(20 * var(--u)); line-height: 1.3; font-weight: 500; color: var(--color-text-secondary); }
 
-.charge-card__body { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-lg); }
-.charge-card__title { font-size: calc(32 * var(--u)); line-height: 1.25; font-weight: 600; margin-bottom: var(--spacing-sm); }
+.charge-card__body { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+.charge-card__row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--spacing-md); }
+.charge-card__title { font-size: calc(32 * var(--u)); line-height: 1.25; font-weight: 600; }
 
 .route-grid { flex: 1; min-height: min-content; display: grid; grid-template-columns: 1fr calc(380 * var(--u)); gap: var(--spacing-lg); }
 .side-cards { display: flex; flex-direction: column; gap: var(--spacing-lg); }
@@ -426,20 +448,20 @@ a { color: inherit; }
 ------------------------------------------------------------ */
 .nav {
   flex: none;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--spacing-sm);
   padding: var(--spacing-sm);
   background: var(--color-bg-surface);
   border-radius: var(--radius-full);
 }
 .nav__item {
+  grid-row: 1;
   position: relative;
-  isolation: isolate;
-  flex: 1;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-sm);
   padding: var(--spacing-md) var(--spacing-lg);
   border-radius: var(--radius-full);
   font-size: calc(22 * var(--u));
@@ -448,17 +470,27 @@ a { color: inherit; }
   color: var(--color-text-secondary);
   text-decoration: none;
 }
+.nav__item:nth-of-type(1) { grid-column: 1; }
+.nav__item:nth-of-type(2) { grid-column: 2; }
+.nav__item:nth-of-type(3) { grid-column: 3; }
+.nav__item:nth-of-type(4) { grid-column: 4; }
+.nav__content { display: flex; align-items: center; justify-content: center; gap: calc(8 * var(--u)); }
 .nav__item i { font-size: var(--size-icon-md); line-height: 1; }
+
+/* Eén gele pil, altijd het eerste kind van de balk. Hij staat in de kolom van het actieve item.
+   Doordat hij vooraan in de boom staat, ligt zijn laag in de overgang altijd onder de tekst,
+   ook als je van rechts naar links navigeert. */
 .nav__pill {
-  display: none;
-  position: absolute;
-  inset: 0;
-  z-index: -1;
+  grid-row: 1;
+  grid-column: 1;
   border-radius: var(--radius-full);
   background: var(--color-bg-accent);
+  view-transition-name: nav-pill;
 }
+.screen[data-view="route"] .nav__pill { grid-column: 2; }
+.screen[data-view="energy"] .nav__pill { grid-column: 3; }
+.screen[data-view="climate"] .nav__pill { grid-column: 4; }
 .nav__item[aria-current="page"] { color: var(--color-text-on-accent); }
-.nav__item[aria-current="page"] .nav__pill { display: block; view-transition-name: nav-pill; }
 
 /* ------------------------------------------------------------
    View transitions
@@ -466,6 +498,11 @@ a { color: inherit; }
    staat morphen naar elkaar. Er mag per moment maar één element per naam zijn.
 ------------------------------------------------------------ */
 .app-header { view-transition-name: header; }
+/* Icoon en label van elk navigatie-item krijgen een eigen laag, boven de pil. */
+.nav__item:nth-of-type(1) .nav__content { view-transition-name: nav-content-1; }
+.nav__item:nth-of-type(2) .nav__content { view-transition-name: nav-content-2; }
+.nav__item:nth-of-type(3) .nav__content { view-transition-name: nav-content-3; }
+.nav__item:nth-of-type(4) .nav__content { view-transition-name: nav-content-4; }
 .nav { view-transition-name: nav; }
 
 [data-vt="map"] { view-transition-name: map; }
@@ -475,6 +512,7 @@ a { color: inherit; }
 [data-vt="route"] { view-transition-name: route; }
 [data-vt="chart"] { view-transition-name: chart; }
 [data-vt="charge"] { view-transition-name: charge; }
+[data-vt="trend"] { view-transition-name: trend; }
 [data-vt="info-1"] { view-transition-name: info-1; }
 [data-vt="info-2"] { view-transition-name: info-2; }
 [data-vt="info-3"] { view-transition-name: info-3; }
@@ -524,7 +562,8 @@ a { color: inherit; }
 ::view-transition-new(info-2):only-child { animation-delay: 180ms; }
 ::view-transition-new(info-3):only-child { animation-delay: 240ms; }
 ::view-transition-new(chart):only-child { animation-delay: 80ms; }
-::view-transition-new(charge):only-child { animation-delay: 200ms; }
+::view-transition-new(trend):only-child { animation-delay: 200ms; }
+::view-transition-new(charge):only-child { animation-delay: 260ms; }
 ::view-transition-new(zone-front):only-child { animation-delay: 80ms; }
 ::view-transition-new(zone-rear):only-child { animation-delay: 140ms; }
 ::view-transition-new(fan):only-child { animation-delay: 200ms; }
@@ -595,11 +634,16 @@ html.theme-switching::view-transition-new(root) { z-index: 2; }
   .view[data-view="route"] .side-cards .info-card { flex: 1; }
   .view[data-view="route"] .info-card:nth-child(n+3) { display: none; }
 
-  /* Energie: tegels en laadstop links, grafiek rechts */
-  .view[data-view="energy"] { grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr; }
-  .view[data-view="energy"] .chart-card { grid-column: 2; grid-row: 1 / span 2; }
-  .view[data-view="energy"] .charge-card { grid-column: 1; grid-row: 2; align-self: start; }
-  .view[data-view="energy"] .charge-card__body { flex-direction: column; align-items: flex-start; }
+  /* Energie: tegels en laadstop bovenaan, de twee grafieken eronder */
+  .view[data-view="energy"] {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "tiles charge" "chart trend";
+  }
+  .view[data-view="energy"] .tiles { grid-area: tiles; }
+  .view[data-view="energy"] .charge-card { grid-area: charge; }
+  .view[data-view="energy"] .chart-card { grid-area: chart; }
+  .view[data-view="energy"] .trend-card { grid-area: trend; }
 
   /* Klimaat: twee kolommen */
   .view[data-view="climate"] { grid-template-columns: 1fr 1fr; align-content: start; }
@@ -619,9 +663,56 @@ html.theme-switching::view-transition-new(root) { z-index: 2; }
   .next-stop__sub { font-size: calc(22 * var(--u)); }
   .btn { font-size: calc(24 * var(--u)); min-height: var(--size-touch-min); min-width: var(--size-touch-min); }
   .btn--icon { width: var(--size-touch-min); }
-  .nav__item span:last-child { display: none; }
+  .nav__label { display: none; }
   .map-chip { font-size: calc(18 * var(--u)); max-width: 60%; }
   .stop, .info-card p, .tile__sub { font-size: calc(22 * var(--u)); }
   .mode-grid, .segmented { gap: var(--spacing-sm); }
-  .charge-card__body { flex-direction: column; align-items: flex-start; }
 }
+
+/* ------------------------------------------------------------
+   Visualisaties op de energie-weergave
+------------------------------------------------------------ */
+.trend-card { padding-bottom: 0; overflow: hidden; }
+/* De grafiek loopt van rand tot rand over de kaart en tot onderaan. */
+.trend {
+  position: relative;
+  flex: 1;
+  min-height: calc(150 * var(--u));
+  margin-inline: calc(-1 * var(--spacing-lg));
+}
+.trend__stop {
+  position: absolute;
+  bottom: calc(12 * var(--u));
+  left: var(--spacing-lg);
+  font-size: calc(20 * var(--u));
+  line-height: 1.2;
+  font-weight: 600;
+}
+.trend__stop--end { left: auto; right: var(--spacing-lg); }
+.trend svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.trend__area { fill: var(--color-status-success-subtle); opacity: 0.4; }
+.trend__line,
+.trend__reserve { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.trend__line { stroke: var(--color-status-success); stroke-width: calc(4 * var(--u)); }
+.trend__line--future { stroke-dasharray: calc(10 * var(--u)) calc(8 * var(--u)); }
+.trend__reserve { stroke: var(--color-status-danger); stroke-width: calc(2 * var(--u)); stroke-dasharray: calc(6 * var(--u)) calc(6 * var(--u)); }
+.trend__now {
+  position: absolute;
+  width: calc(24 * var(--u));
+  height: calc(24 * var(--u));
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--color-bg-accent);
+  border: calc(6 * var(--u)) solid var(--color-bg-surface);
+  box-shadow: 0 0 0 calc(3 * var(--u)) var(--color-bg-accent);
+  box-sizing: border-box;
+}
+.trend__label {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 14 * var(--u)));
+  font-size: calc(20 * var(--u));
+  line-height: 1.2;
+  font-weight: 600;
+}
+.trend__label--end { right: var(--spacing-lg); transform: translate(0, calc(-100% - 8 * var(--u))); }
+.trend__label--reserve { left: var(--spacing-lg); transform: translate(0, calc(-100% - 6 * var(--u))); color: var(--color-status-danger); font-size: calc(18 * var(--u)); }
